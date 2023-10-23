@@ -59,7 +59,7 @@ public class Sort {
      * @param low   the low index
      */
     public static void merge (int[] data, int low, int high, int k) {
-    
+
         if (high < low + k) {
             // the subarray has k or fewer elements
             // just make one big heap and do deleteMins on it
@@ -71,72 +71,70 @@ public class Sort {
             for (int j = low; j <= high; j++) {
                 try {
                     data[j] = ((MergesortHeapNode) heap.deleteMin()).getKey();
-                }
-                catch (EmptyHeapException e) {
-                    System.out.println ("Tried to delete from an empty heap.");
-                }
-            }
-            
-        } else {
-        // divide the array into k subarrays and do a k-way merge
-
-        //divide the array into k subarrays
-        //size of each subarray
-        // taking the top value index - low value index + 1 and then divide the size by k
-        int subArraySize = (high - low + 1)/k;
-        //Keep track of the start and end index of the subarrays
-        int[] subArrayStartIndex = new int[k];
-        int[] subArrayEndIndex = new int[k];
-
-        //calculate the starting and ending index for each subarray
-        for (int i = 0; i < k;i++)
-        {
-            subArrayStartIndex[i] = (i * subArraySize) + low;
-            subArrayEndIndex[i] = (subArrayStartIndex[i] + subArraySize) - 1;
-        }
-        //adjust the ending index for the last subarray to ensure all elements are covered
-        subArrayEndIndex[k-1] = high;
-        //create a binary heap to store the smallest elements in each subarray
-        BinaryHeap heap = new BinaryHeap();
-        //Initialize the heap with the smallest elements from each subarray
-        for (int i = 0; i < k; i++)
-        {
-            //Compare values in start and end index subarrays
-            if (subArrayStartIndex[i] <= subArrayEndIndex[i])
-            {
-                int value = data[subArrayStartIndex[i]];
-                //Insert the smallest element from each subarray into the heap
-                heap.insert(new MergesortHeapNode(value, i));
-                //Move pointer to the next element in the subarray
-                subArrayStartIndex[i]++;
-            }
-        }
-        //Merge the subarrays into the original array, base off the 'if' statement
-            for (int i = low; i <= high; i++)
-            {
-                try
-                {
-                    MergesortHeapNode node = (MergesortHeapNode) heap.deleteMin();
-                    int subarrayIndex = node.getWhichSubarray();
-                    int val = node.getKey();
-                    // Update the current position in the original array with the smallest value
-                    data[i] = val;
-                    if (subArrayStartIndex[subarrayIndex] <= subArrayEndIndex[subarrayIndex])
-                    {
-                        int nextVal = data[subArrayStartIndex[subarrayIndex]];
-                        //Insert the next smallest element from the same subarray to the heap
-                        heap.insert(new MergesortHeapNode(nextVal, subarrayIndex));
-                        subArrayEndIndex[subarrayIndex]++;
-                    }
-                }
-                //Check if there are more elements in the subarray to insert into the heap
-                catch (EmptyHeapException e)
-                {
+                } catch (EmptyHeapException e) {
                     System.out.println("Tried to delete from an empty heap.");
                 }
             }
-        }
 
+        }
+        else
+        {
+            // divide the array into k subarrays and do a k-way merge
+
+            //Create an auxiliary array to hold merged values
+            int[] auxArray = new int[high - low + 1];
+            //divide the array into k subarrays
+            //size of each subarray
+            //taking the top value index - low value index + 1 and then divide the size by k
+            int subArraySize = (high - low + 1) / k;
+            //Keep track of the start and end index of the subarrays
+            int[] subArrayStartIndex = new int[k];
+            int[] subArrayEndIndex = new int[k];
+
+            //calculate the starting and ending index for each subarray
+            for (int i = 0; i < k; i++) {
+                subArrayStartIndex[i] = (i * subArraySize) + low;
+                subArrayEndIndex[i] = (subArrayStartIndex[i] + subArraySize) - 1;
+            }
+            //adjust the ending index for the last subarray to ensure all elements are covered
+            subArrayEndIndex[k - 1] = high;
+            //create a binary heap to store the smallest elements in each subarray
+            BinaryHeap heap = new BinaryHeap();
+            //Initialize the heap with the smallest elements from each subarray
+            for (int i = 0; i < k; i++) {
+                //Compare values in start and end index subarrays
+                if (subArrayStartIndex[i] <= subArrayEndIndex[i]) {
+                    int value = data[subArrayStartIndex[i]];
+                    //Insert the smallest element from each subarray into the heap
+                    heap.insert(new MergesortHeapNode(value, i));
+                    //Move pointer to the next element in the subarray
+                    subArrayStartIndex[i]++;
+                }
+            }
+            //Merge the subarrays into the original array, base off the 'if' statement
+            for (int i = 0; i < auxArray.length; i++) {
+                try {
+                    MergesortHeapNode node = (MergesortHeapNode) heap.deleteMin();
+                    int subarrayIndex = node.getWhichSubarray();
+                    int val = node.getKey();
+                    auxArray[i] = val;
+
+                    if (subArrayStartIndex[subarrayIndex] <= subArrayEndIndex[subarrayIndex]) {
+                        int nextVal = data[subArrayStartIndex[subarrayIndex]];
+                        heap.insert(new MergesortHeapNode(nextVal, subarrayIndex));
+                        subArrayStartIndex[subarrayIndex]++;
+                    }
+                } catch (EmptyHeapException e) {
+                    System.out.println("Tried to delete from an empty heap.");
+                }
+            }
+
+            // Copy the merged values from the auxiliary array back to the original array
+            for (int i = 0; i < auxArray.length; i++) {
+                data[low + i] = auxArray[i];
+            }
+
+        }
     }
     
     
@@ -189,7 +187,7 @@ public class Sort {
     {
         for (int i = 0; i<data.length-1; i++)
         {
-            if (data[i] < data[i+1])
+            if (data[i] > data[i+1])
             {
                 return false;
             }
@@ -231,9 +229,10 @@ public class Sort {
         Date startDate = new Date();
         startTime = startDate.getTime();
 
-        int n = 200000;    // n = size of the array
+        int n = 10;    // n = size of the array
         int k = 2;         // k = k in k-way mergesort
         int[] data = getRandomArrayOfIntegers(n);
+        printArray(data);
         kwayMergesort(data, k);
 
         // stop the timer
@@ -246,14 +245,27 @@ public class Sort {
             System.out.println("** Results for k-way mergesort:");
             System.out.println("    " + "n = " + n + "    " + "k = " + k);
             System.out.println("    " + "Time: " + totalTime + " ms.");
+            printArray(data);
         }
         else
         {
             System.out.println("Error: Data is not sorted in non-decreasing order!");
+            printArray(data);
         }
     }
-    
-    
+
+    /**
+     * Prints the array
+     * @param data the input array
+     */
+    private static void printArray(int[] data) {
+        for (int i = 0; i < data.length; i++) {
+            System.out.print(data[i] + " ");
+        }
+        System.out.println();
+    }
+
+
     /**
      * code to test the sorting algorithms
      */
