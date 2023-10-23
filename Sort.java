@@ -180,7 +180,22 @@ public class Sort {
         return data;
     }
 
-
+    /**
+     * Validate if the data is sorted
+     * @param data an array of integers.
+     * @return a boolean value
+     */
+    public static boolean isSorted(int[] data)
+    {
+        for (int i = 0; i<data.length-1; i++)
+        {
+            if (data[i] < data[i+1])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
     /**
      * Perform checks to see if the algorithm has a bug.
      */
@@ -216,8 +231,8 @@ public class Sort {
         Date startDate = new Date();
         startTime = startDate.getTime();
 
-        int n = 100;    // n = size of the array
-        int k = 3;         // k = k in k-way mergesort
+        int n = 200000;    // n = size of the array
+        int k = 2;         // k = k in k-way mergesort
         int[] data = getRandomArrayOfIntegers(n);
         kwayMergesort(data, k);
 
@@ -225,10 +240,17 @@ public class Sort {
         Date finishDate = new Date();
         finishTime = finishDate.getTime();
         totalTime += (finishTime - startTime);
-        
-        System.out.println("** Results for k-way mergesort:");
-        System.out.println("    " + "n = " + n + "    " + "k = " + k);
-        System.out.println("    " + "Time: " + totalTime + " ms.");
+
+        if(isSorted(data))
+        {
+            System.out.println("** Results for k-way mergesort:");
+            System.out.println("    " + "n = " + n + "    " + "k = " + k);
+            System.out.println("    " + "Time: " + totalTime + " ms.");
+        }
+        else
+        {
+            System.out.println("Error: Data is not sorted in non-decreasing order!");
+        }
     }
     
     
