@@ -84,7 +84,6 @@ public class Sort {
             //Create an auxiliary array to hold merged values
             int[] auxArray = new int[high - low + 1];
             //divide the array into k subarrays
-            //size of each subarray
             //taking the top value index - low value index + 1 and then divide the size by k
             int subArraySize = (high - low + 1) / k;
             //Keep track of the start and end index of the subarrays
@@ -93,8 +92,8 @@ public class Sort {
 
             //calculate the starting and ending index for each subarray
             for (int i = 0; i < k; i++) {
-                subArrayStartIndex[i] = (i * subArraySize) + low;
-                subArrayEndIndex[i] = (subArrayStartIndex[i] + subArraySize) - 1;
+                subArrayStartIndex[i] = low + i*(high-low+1)/k;
+                subArrayEndIndex[i] = low + (i+1)*(high-low+1)/k - 1;
             }
             //adjust the ending index for the last subarray to ensure all elements are covered
             subArrayEndIndex[k - 1] = high;
@@ -114,19 +113,25 @@ public class Sort {
             //Merge the subarrays into the original array, base off the 'if' statement
             for (int i = 0; i < auxArray.length; i++) {
                 try {
+                    //Get the smalles element from the heap
                     MergesortHeapNode node = (MergesortHeapNode) heap.deleteMin();
                     int subarrayIndex = node.getWhichSubarray();
                     int val = node.getKey();
                     auxArray[i] = val;
 
+                    //Check if there are more elements in the current subarray
                     if (subArrayStartIndex[subarrayIndex] <= subArrayEndIndex[subarrayIndex]) {
+                        //Get the next element in the current subarray
                         int nextVal = data[subArrayStartIndex[subarrayIndex]];
+                        //Send the next element into the heap
                         heap.insert(new MergesortHeapNode(nextVal, subarrayIndex));
+                        //Move the pointer to the next element in the subrray
                         subArrayStartIndex[subarrayIndex]++;
                     }
                 } catch (EmptyHeapException e) {
                     System.out.println("Tried to delete from an empty heap.");
                 }
+
             }
 
             // Copy the merged values from the auxiliary array back to the original array
@@ -229,10 +234,10 @@ public class Sort {
         Date startDate = new Date();
         startTime = startDate.getTime();
 
-        int n = 10;    // n = size of the array
-        int k = 2;         // k = k in k-way mergesort
+        int n = 1600000;    // n = size of the array
+        int k = 3;         // k = k in k-way mergesort
         int[] data = getRandomArrayOfIntegers(n);
-        printArray(data);
+        //printArray(data);
         kwayMergesort(data, k);
 
         // stop the timer
@@ -245,12 +250,13 @@ public class Sort {
             System.out.println("** Results for k-way mergesort:");
             System.out.println("    " + "n = " + n + "    " + "k = " + k);
             System.out.println("    " + "Time: " + totalTime + " ms.");
-            printArray(data);
+            //printArray(data);
         }
         else
         {
             System.out.println("Error: Data is not sorted in non-decreasing order!");
             printArray(data);
+
         }
     }
 
