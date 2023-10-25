@@ -234,8 +234,8 @@ public class Sort {
         Date startDate = new Date();
         startTime = startDate.getTime();
 
-        int n = 1600000;    // n = size of the array
-        int k = 3;         // k = k in k-way mergesort
+        int n = 3200000;    // n = size of the array
+        int k = 50;         // k = k in k-way mergesort
         int[] data = getRandomArrayOfIntegers(n);
         //printArray(data);
         kwayMergesort(data, k);
